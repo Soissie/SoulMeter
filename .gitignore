@@ -39,3 +39,11 @@
 
 # debug information files
 *.dwo
+
+#Added by Noah
+# build folder removed and such
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build/
