@@ -1,9 +1,19 @@
 # SoulMeter
 This github is meant for the Soulmeter project. This project is a part of the digital alertness S4 project, which takes place in the first half of 2026. It builds upon a framework made in 2024/2025.
 
-Add launch instructions:
+# Branch Contents
 
-# Branch contents
-The prototype1 branch contains a various folders for testing aspects of the device.
-The test1 folder contains code for testing the LDRs with ambient, torch, and blocked light.
-The test2 folder contains code for testing the LED strip at the top of the device.
+The `prototype1` branch contains various folders for testing different aspects of the device:
+
+1. **LDR_test**  
+   Used for testing three LDRs. Specifically tested with:
+   - Ambient light  
+   - Torch light  
+   - Blocked light  
+
+2. **LED_test**  
+   Used for testing the LED strip at the top.  
+   Various animations were used to check individual LED quality.
+
+3. **Prototype1**  
+   Combines both components into a finished working prototype.
