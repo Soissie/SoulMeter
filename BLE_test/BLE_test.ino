@@ -1,3 +1,8 @@
+// code compatible with ESP32S3
+// Based on examole inside esp32s3 arduino library
+
+// test with: Nodeloop or nRF connect
+
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -71,7 +76,7 @@ void setup() {
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pAdvertising->setScanResponse(true);
   pAdvertising->setMinPreferred(0x06);
-  pAdvertising->setMaxPreferred(0x12); // Fixed from your original
+  pAdvertising->setMaxPreferred(0x12); // other values than example values
   BLEDevice::startAdvertising();
 
   Serial.println("BLE UART ready, waiting for connection...");
