@@ -108,15 +108,15 @@ async function connect_and_listen(peripheral) {
   console.log("[BLE] Connected to ESP32");
 
   const { characteristics } =
-    await peripheral.discoverSomeServicesAndCharacteristicsAsync(
-      [settings.BLE_SERVICE_UUID],
-      [settings.BLE_RX_UUID, settings.BLE_TX_UUID],
-    );
+  await peripheral.discoverSomeServicesAndCharacteristicsAsync(
+    [settings.BLE_SERVICE_UUID],
+    [settings.BLE_RX_UUID, settings.BLE_TX_UUID],
+  );
 
   rx_characteristic =
-    characteristics.find((c) => c.uuid === settings.BLE_RX_UUID) || null;
+  characteristics.find((c) => c.uuid === settings.BLE_RX_UUID) || null;
   const tx_characteristic =
-    characteristics.find((c) => c.uuid === settings.BLE_TX_UUID);
+  characteristics.find((c) => c.uuid === settings.BLE_TX_UUID);
 
   if (!rx_characteristic || !tx_characteristic) {
     throw new Error("NUS characteristics not found — check ESP32 firmware");
@@ -150,7 +150,7 @@ async function stop_scan() {
     // start_scanning(). On Linux/mac it resolves normally well within this.
     await Promise.race([
       noble.stopScanningAsync(),
-      new Promise((resolve) => setTimeout(resolve, 1000)),
+                       new Promise((resolve) => setTimeout(resolve, 1000)),
     ]);
   } catch {
     // Okay if it fails
@@ -194,8 +194,8 @@ async function start_scanning() {
     // shows up with an empty name there — but the service UUID does come
     // through on both Windows and Linux.
     const uuid_match = service_uuids
-      .map((u) => u.replace(/-/g, "").toLowerCase())
-      .includes(settings.BLE_SERVICE_UUID.replace(/-/g, "").toLowerCase());
+    .map((u) => u.replace(/-/g, "").toLowerCase())
+    .includes(settings.BLE_SERVICE_UUID.replace(/-/g, "").toLowerCase());
     const name_match = name === settings.BLE_DEVICE_NAME;
 
     if (!uuid_match && !name_match) return;
@@ -219,8 +219,9 @@ async function start_scanning() {
   try {
     // Scan with NO service-UUID filter. On the Windows (WinRT) binding a
     // filtered scan often returns zero results even when the device is
-    // advertising, so we scan for everything and match by device name in the
-    // discover handler above. Linux/mac work fine either way.
+    // advertising, so we scan for everything and match by service UUID (with
+    // name as a fallback) in the discover handler above. Linux/mac work fine
+    // either way.
     await noble.startScanningAsync([], false);
   } catch (err) {
     console.error("[BLE] Failed to start scan:", err.message);
@@ -250,12 +251,13 @@ async function init() {
     if (!scanning_started) {
       console.error(
         "[BLE] Adapter did not power on / scanning never started.\n" +
-          "  Windows: make sure Bluetooth is ON in Settings and the noble build step succeeded.\n" +
-          "  Linux:   sudo systemctl start bluetooth && sudo hciconfig hci0 up\n" +
-          "  macOS:   grant Bluetooth access in System Settings -> Privacy & Security",
+        "  Windows: make sure Bluetooth is ON in Settings and the noble build step succeeded.\n" +
+        "  Linux:   sudo systemctl start bluetooth && sudo hciconfig hci0 up\n" +
+        "  macOS:   grant Bluetooth access in System Settings -> Privacy & Security",
       );
     }
   }, settings.BLE_ADAPTER_TIMEOUT_MS);
 }
 
 module.exports = { init, send };
+
