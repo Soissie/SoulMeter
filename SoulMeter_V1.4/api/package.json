@@ -8,6 +8,6 @@
     "dev": "node index.js --no-ble"
   },
   "dependencies": {
-    "@stoprocent/noble": "^1.9.2"
+    "@stoprocent/noble": "^2.3.0"
   }
 }

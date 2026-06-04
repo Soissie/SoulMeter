@@ -47,3 +47,8 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 build/
+
+
+# Node related
+node_modules/
+package-lock.json
