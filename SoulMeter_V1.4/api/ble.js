@@ -193,26 +193,44 @@ async function start_scanning() {
 // entry
 async function init() {
   console.log("[BLE] Waiting for Bluetooth adapter...");
-  await Promise.race([
-    noble.waitForPoweredOnAsync(),
-    new Promise((_, reject) =>
-      setTimeout(
-        () =>
-          reject(
-            new Error(
-              // based on earlier
-              // Can be circumvented by launching as root (sudo node index.js)
-              "Bluetooth adapter did not power on in time.\n" +
-                "  Linux: sudo systemctl start bluetooth && sudo hciconfig hci0 up\n" +
-                "  Then:  sudo setcap cap_net_raw+eip $(eval readlink -f $(which node))\n" +
-                // macOS not tested, based on a similar issue on github
-                "  macOS: grant Bluetooth access in System Settings -> Privacy & Security",
-            ),
-          ),
-        settings.BLE_ADAPTER_TIMEOUT_MS,
-      ),
-    ),
-  ]);
+
+  // wait for the adapter to power on.
+  // we use the stateChange event rather than noble.waitForPoweredOnAsync(),
+  // because that helper is not present in every build of @stoprocent/noble
+  // (notably on Windows), which caused a "not a function" crash on startup.
+  await new Promise((resolve, reject) => {
+    // already powered on? resolve immediately
+    if (noble._state === "poweredOn" || noble.state === "poweredOn") {
+      return resolve();
+    }
+
+    const timer = setTimeout(() => {
+      noble.removeListener("stateChange", on_state);
+      reject(
+        new Error(
+          // based on earlier
+          // Can be circumvented by launching as root (sudo node index.js)
+          "Bluetooth adapter did not power on in time.\n" +
+            "  Linux: sudo systemctl start bluetooth && sudo hciconfig hci0 up\n" +
+            "  Then:  sudo setcap cap_net_raw+eip $(eval readlink -f $(which node))\n" +
+            // macOS not tested, based on a similar issue on github
+            "  macOS: grant Bluetooth access in System Settings -> Privacy & Security\n" +
+            "  Windows: make sure Bluetooth is on and the noble build step succeeded",
+        ),
+      );
+    }, settings.BLE_ADAPTER_TIMEOUT_MS);
+
+    function on_state(adapter_state) {
+      if (adapter_state === "poweredOn") {
+        clearTimeout(timer);
+        noble.removeListener("stateChange", on_state);
+        resolve();
+      }
+    }
+
+    noble.on("stateChange", on_state);
+  });
+
   start_scanning();
 }
 
