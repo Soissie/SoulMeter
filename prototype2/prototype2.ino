@@ -1,6 +1,6 @@
 #include "BLE_UART.h"
 
-#define NumberOfBlocks 1
+#define NumberOfBlocks 3
 #define Offset 3
 
 
@@ -34,6 +34,8 @@ void loop() {
   int msg = BLEmsg(checkPosition());
   Serial.print("block states: \n");
   Serial.println(blockIgnore[0]);
+  Serial.println(blockIgnore[1]);
+  Serial.println(blockIgnore[2]);
   sendMsg(msg);
   delay(500);
 }
@@ -59,9 +61,9 @@ int blockValue(int value, int pinNum) {
 // checks position of individual tile
 int checkPosition() {
   int MultipleBlockCheck = 0;
-  for (int i = 1; i <= NumberOfBlocks; i++) { // for each tile
+  for (int i = 1; i <= NumberOfBlocks + 0; i++) { // for each tile
     if (blockIgnore[i - 1] == 0) {    // Where the tile wasn't already changed
-      if (blockValue(3000, i + Offset) == 1) { // With enough light
+      if (blockValue(2000, i + Offset) == 1) { // With enough light
         if (MultipleBlockCheck == 0) {  // If only 1 tile has been turned since the last check
           Serial.println("passed check");
           MultipleBlockCheck = 1;
@@ -80,7 +82,7 @@ int checkPosition() {
     if (delayMS < (millis() - previousMillis)) {
       previousMillis = millis();
       setPrevMs = 0;
-      if (blockValue(3000, actualblock + Offset) == 1) {
+      if (blockValue(2000, actualblock + Offset) == 1) {
         blockIgnore[actualblock - 1] = 1;
         return actualblock;
       }
@@ -105,7 +107,7 @@ void sendMsg(int msg) {
     delay(500);
   } else {
     String out = "Block changed: " + String(msg);
-    sendBLE(out);                      // ← send over BLE
+    sendBLE(out);                      //  send over BLE
     Serial.println(out);
   }
 }

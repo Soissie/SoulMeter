@@ -47,6 +47,7 @@ void setupBLE() {
 
   BLEService *pService = pServer->createService(NUS_SERVICE_UUID);
 
+
   pTxCharacteristic = pService->createCharacteristic(
     NUS_CHARACTERISTIC_UUID_TX,
     BLECharacteristic::PROPERTY_NOTIFY
