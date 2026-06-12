@@ -29,18 +29,21 @@
 #define MAX_TILE_COUNT      9        // upper limit for tile count
 
 // GPIO for each tile's LDR. Tile 1 == LDR_PINS[0], etc
-const int LDR_PINS_DEFAULT[TILE_COUNT] = { 1, 2, 3, 4, 5, 6, 7, 8, 9};
+// LDR order depending on tile install. 
+// Current order based on back to front top to bottom.
+const int LDR_PINS_DEFAULT[TILE_COUNT] = {8, 9, 7, 4, 5, 6, 1, 2, 3};
 
 // How long new sensor reading must stay stable before it is accepted
 // This helps debouncing and also handles the settle time of the physical tile
 // full rotation registers after this
-#define SETTLE_MS           800
+#define SETTLE_MS           1000
 
-#define LDR_THRESHOLD           3000   // 0-4095, threshold, below this value counts as a tile flip
+#define LDR_THRESHOLD           3400   // 0-4095, threshold, below this value counts as a tile flip
 #define LDR_FLIPPED_WHEN_DARK   true    // switches to above ... value
 //  LED strip (FastLED) ========================================
 #define LED_PIN             11       // data line GPIO
-#define NUM_LEDS            101      // total LEDs on the strip
+// May need adjusting after final install.
+#define NUM_LEDS            140      // total LEDs on the strip
 #define LED_TYPE            WS2812B
 #define COLOR_ORDER         GRB      // WS2812B is GRB (not rgb). FastLED reorders
                                      // Only change if the color comes out swapped
