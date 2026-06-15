@@ -293,7 +293,6 @@ function get_frontend() {
 // ── state ──────────────────────────────────────────────────────────────────
 // stores the final score so submitScore() can read it without needing a param
 var finalScore    = 100
-var lastMediaUrl  = null  // track last rendered media so we dont rebuild the iframe every 700ms
 var lastScreen    = null  // track previous screen so we know when gameover is entered fresh
 
 // ── api helpers ────────────────────────────────────────────────────────────
@@ -383,6 +382,12 @@ async function submitScore() {
 // NOTE: no regex used here to avoid backslash escaping issues in the template
 function renderMedia(url) {
   var box = document.getElementById('q-media')
+
+  var current = box.getAttribute('data-url') || ''
+  var wanted  = url || ''
+  if (current === wanted) return
+
+  box.setAttribute('data-url', wanted)
   box.innerHTML     = ''
   box.style.display = 'none'
   if (!url) return
@@ -451,7 +456,7 @@ function renderStatusBar(s) {
 }
 
 function renderHome(s) {
-  lastMediaUrl = null  // reset so next question rerenders its media
+  renderMedia(null)
 
   document.getElementById('score-display').textContent = 'Score: ' + s.score + '%'
 
@@ -504,12 +509,7 @@ function renderQuestion(s) {
   document.getElementById('q-meta').textContent = 'Tile ' + (t.index + 1) + '  \u00b7  ' + t.value + '% at stake'
   document.getElementById('q-text').textContent  = t.question
 
-  // only rebuild the media element if the url changed
-  // rebuilding every 700ms causes iframes to reload and videos to flicker
-  if (t.media !== lastMediaUrl) {
-    lastMediaUrl = t.media
-    renderMedia(t.media)
-  }
+  renderMedia(t.media || null)
 
   var ab = document.getElementById('q-answers')
   ab.innerHTML = ''
